@@ -9,11 +9,19 @@ android {
         version = release(36)
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("../android.keystore")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "123456Aa@"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "android"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "123456Aa@"
+        }
+    }
     defaultConfig {
         applicationId = "com.hoanganhdangcode.budgetchecker"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
+        versionCode = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -21,7 +29,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // FIX QUAN TRỌNG: Gắn cấu hình ký vào bản build release
+            signingConfig = signingConfigs.getByName("release")
+
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

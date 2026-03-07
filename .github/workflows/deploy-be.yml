@@ -1,9 +1,12 @@
-name: Deploy VPS
+name: Deploy Backend VPS
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'be/**'
+      - 'infra/**'
 
 jobs:
   deploy:
@@ -23,9 +26,7 @@ jobs:
 
             cd /home/dev/budgetchecker
 
-            echo "Pull latest code"
             git fetch origin main
             git reset --hard origin/main
 
-            echo "Deploy container"
             docker-compose -f infra/docker-compose.yml up -d --build

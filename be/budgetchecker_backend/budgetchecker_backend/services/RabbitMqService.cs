@@ -1,42 +1,47 @@
 ﻿using RabbitMQ.Client;
 using System.Text;
 
-public class RabbitMqService
+namespace budgetchecker_backend.services
 {
-    private readonly IConfiguration _config;
-
-    public RabbitMqService(IConfiguration config)
+  
+    public class RabbitMqService
     {
-        _config = config;
-    }
+        private readonly IConfiguration _config;
 
-    public async Task PublishAsync(string message)
-    {
-        var factory = new ConnectionFactory
+        public RabbitMqService(IConfiguration config)
         {
-            HostName = _config["RabbitMQ:Host"],
-            Port = int.Parse(_config["RabbitMQ:Port"]),
-            UserName = _config["RabbitMQ:Username"],
-            Password = _config["RabbitMQ:Password"]
-        };
+            _config = config;
+        }
 
-        await using var connection = await factory.CreateConnectionAsync();
-        await using var channel = await connection.CreateChannelAsync();
+        public void Publish(string message)
+        {
+            var factory = new ConnectionFactory()
+            {
+                HostName = _config["RabbitMQ:Host"],
+                Port = int.Parse(_config["RabbitMQ:Port"]),
+                UserName = _config["RabbitMQ:Username"],
+                Password = _config["RabbitMQ:Password"]
+            };
 
-        await channel.QueueDeclareAsync(
-            queue: "test_queue",
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null
-        );
+            using var connection = factory.CreateConnection();
+            using var channel = connection.CreateModel();
 
-        var body = Encoding.UTF8.GetBytes(message);
+            channel.QueueDeclare(
+                queue: "test_queue",
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null
+            );
 
-        await channel.BasicPublishAsync(
-            exchange: "",
-            routingKey: "test_queue",
-            body: body
-        );
+            var body = Encoding.UTF8.GetBytes(message);
+
+            channel.BasicPublish(
+                exchange: "",
+                routingKey: "test_queue",
+                basicProperties: null,
+                body: body
+            );
+        }
     }
 }

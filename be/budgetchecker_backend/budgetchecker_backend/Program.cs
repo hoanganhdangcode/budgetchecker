@@ -1,3 +1,4 @@
+using budgetchecker_backend.services;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 
@@ -42,6 +43,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "bugetchecker v1");
     c.RoutePrefix = string.Empty;
 });
+service.AddSingleton<RabbitMqService>();
 
 
 
@@ -69,6 +71,18 @@ app.MapGet("/weatherforecast", () =>
 app.MapGet("/ping", () =>
 {
     return "Pong";
+});
+app.MapPost("/test-rabbit", (RabbitMqService rabbit) =>
+{
+    var message = $"Hello RabbitMQ {DateTime.UtcNow}";
+
+    rabbit.Publish(message);
+
+    return Results.Ok(new
+    {
+        status = "sent",
+        message = message
+    });
 });
 
 app.Run();

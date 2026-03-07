@@ -6,7 +6,7 @@ services:
     container_name: budgetchecker_api
     build:
       context: ../be/budgetchecker_backend
-      dockerfile: Dockerfile
+      dockerfile: budgetchecker_backend/Dockerfile
     ports:
       - "8080:8080"
     environment:

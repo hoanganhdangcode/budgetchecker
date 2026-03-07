@@ -34,6 +34,8 @@ service.AddSwaggerGen(
                             }, new List<string>() }
                     });
     });
+service.AddSingleton<RabbitMqService>();
+
 
 
 var app = builder.Build();
@@ -43,7 +45,6 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "bugetchecker v1");
     c.RoutePrefix = string.Empty;
 });
-service.AddSingleton<RabbitMqService>();
 
 
 

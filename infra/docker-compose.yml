@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: budgetchecker_api
+    build:
+      context: ../be/budgetchecker_backend # Build context là thư mục gốc chứa slnx
+      dockerfile: budgetchecker_backend/Dockerfile
+    ports:
+      - "8080:8080" # Map port host:container (chỉnh sửa nếu host đã dùng port 8080)
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+    restart: unless-stopped
+    networks:
+      - budget_network
+
+networks:
+  budget_network:
+    driver: bridge

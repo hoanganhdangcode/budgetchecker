@@ -1,6 +1,6 @@
 # 💰 Budget Checker System
 
-Hệ thống quản lý chi tiêu cá nhân toàn diện, bao gồm cả Backend API và Mobile App (Android), được tổ chức theo mô hình **Monorepo**.
+Hệ thống quản lý chi tiêu cá nhân, bao gồm cả Backend API và Mobile App (Android).
 
 Dự án này được thiết kế với mục tiêu cung cấp trải nghiệm ghi chép và phân tích chi tiêu nhanh chóng, đồng bộ dữ liệu real-time và áp dụng các best practice về Clean Architecture, CI/CD và Containerization.
 

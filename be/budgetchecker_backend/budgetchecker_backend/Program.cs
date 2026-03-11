@@ -96,6 +96,27 @@ app.MapPost("/test-rabbit", (RabbitMqService rabbit) =>
         message = message
     });
 });
+// Auto create tables
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var retries = 5;
+    while (retries > 0)
+    {
+        try
+        {
+            db.Database.EnsureCreated();
+            Console.WriteLine("Database ready.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            retries--;
+            Console.WriteLine($"DB init failed, retrying... ({retries} left): {ex.Message}");
+            Thread.Sleep(3000);
+        }
+    }
+}
 
 app.Run();
 

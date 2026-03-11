@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Transaction> Transactions => Set<Transaction>();  // thêm dòng này
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +27,31 @@ public class AppDbContext : DbContext
 
             entity.HasIndex(x => x.Email)
                 .IsUnique();
+        });
+
+        modelBuilder.Entity<Transaction>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Amount)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(x => x.Description)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.Type)
+                .HasConversion<int>()
+                .IsRequired();
+
+            entity.Property(x => x.Category)
+                .HasConversion<int>()
+                .IsRequired();
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

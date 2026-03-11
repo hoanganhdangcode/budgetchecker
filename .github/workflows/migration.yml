@@ -1,0 +1,60 @@
+name: Auto Migration
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'be/**/Entities/**'
+      - 'be/**/AppDbContext.cs'
+      - 'be/**/Configurations/**'
+
+jobs:
+  migration:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root123
+          MYSQL_DATABASE: budgetdb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add migration
+        working-directory: be/budgetchecker_backend
+        run: |
+          MIGRATION_NAME="Migration_$(date +%Y%m%d%H%M%S)"
+          dotnet ef migrations add $MIGRATION_NAME \
+            --project budgetchecker_backend.Infrastructure \
+            --startup-project budgetchecker_backend \
+          && echo "MIGRATION_CREATED=true" >> $GITHUB_ENV \
+          || echo "MIGRATION_CREATED=false" >> $GITHUB_ENV
+
+      - name: Commit migration files
+        if: env.MIGRATION_CREATED == 'true'
+        run: |
+          git config user.email "ci@github.com"
+          git config user.name "GitHub Actions"
+          git add .
+          git diff --staged --quiet || git commit -m "ci: auto migration $(date +%Y%m%d%H%M%S)"
+          git push

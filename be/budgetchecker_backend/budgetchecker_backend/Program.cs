@@ -1,56 +1,47 @@
 using budgetchecker_backend.services;
-using budgetchecker_backend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using budgetchecker_backend.Infrastructure.Data;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-var services = builder.Services;
-var configuration = builder.Configuration;
+// Add services to the container.
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-services.AddEndpointsApiExplorer();
-
-services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new()
-    {
-        Title = "Budget Checker",
-        Version = "v1",
-        Description = "Backend Budget Checker API"
-    });
-
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Bearer {token}"
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+var service = builder.Services;
+//swagger
+service.AddEndpointsApiExplorer();
+service.AddSwaggerGen(
+    option => {
+        option.SwaggerDoc("v1", new() { Title = "Budget Checker", Version = "v1", Description = "Backend Budget Checker api swagger document" });
+        option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new List<string>()
-        }
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "Nhập JWT Token theo định dạng: **Bearer {token}**"
+        });
+        option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer" }
+                            }, new List<string>() }
+                    });
     });
-});
+service.AddSingleton<RabbitMqService>();
 
-services.AddSingleton<RabbitMqService>();
+var connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection");
 
-var connectionString = configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string not found");
-
-services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseMySql(
         connectionString,
@@ -59,37 +50,56 @@ services.AddDbContext<AppDbContext>(options =>
 });
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "budgetchecker v1");
-        c.RoutePrefix = string.Empty;
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "bugetchecker v1");
+    c.RoutePrefix = string.Empty;
+});
 
-app.MapGet("/ping", () => "Pong");
 
+
+//app.UseHttpsRedirection();
+
+var summaries = new[]
+{
+    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+};
+
+app.MapGet("/weatherforecast", () =>
+{
+    var forecast = Enumerable.Range(1, 5).Select(index =>
+        new WeatherForecast
+        (
+            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+            Random.Shared.Next(-20, 55),
+            summaries[Random.Shared.Next(summaries.Length)]
+        ))
+        .ToArray();
+    return forecast;
+})
+.WithName("GetWeatherForecast");
+
+app.MapGet("/ping", () =>
+{
+    return "Pong";
+});
 app.MapPost("/test-rabbit", (RabbitMqService rabbit) =>
 {
     var message = $"Hello RabbitMQ {DateTime.UtcNow}";
+
     rabbit.Publish(message);
 
     return Results.Ok(new
     {
         status = "sent",
-        message
+        message = message
     });
 });
 
-
-// AUTO MIGRATE DATABASE
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
-}
-
 app.Run();
+
+internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}

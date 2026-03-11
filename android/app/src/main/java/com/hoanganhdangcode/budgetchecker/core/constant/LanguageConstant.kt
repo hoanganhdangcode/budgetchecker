@@ -5,9 +5,9 @@ object LanguageConstant {
     const val LANGUAGE_VI = "vi"
     const val LANGUAGE_EN = "en"
 
-    val LIST_LANGUAGE = listOf<String>(
-        LANGUAGE_VI,
-        LANGUAGE_EN
-    )
-
+    val LIST_LANGUAGE =
+        listOf<String>(
+            LANGUAGE_VI,
+            LANGUAGE_EN,
+        )
 }

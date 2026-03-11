@@ -35,7 +35,7 @@ android {
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -57,4 +57,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // datastore thay thế cho encrypt shared preferences
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    // Gson dùng để parse object sang JSON
+    implementation("com.google.code.gson:gson:2.13.2")
 }

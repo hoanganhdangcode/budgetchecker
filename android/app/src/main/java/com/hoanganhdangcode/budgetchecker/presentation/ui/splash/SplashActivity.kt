@@ -28,15 +28,14 @@ class SplashActivity : AppCompatActivity() {
 
         motionRoot.post {
             motionRoot.transitionToEnd {
-                val intent = Intent(this@SplashActivity, LoginActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
+                val intent =
+                    Intent(this@SplashActivity, LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
 
                 startActivity(intent)
                 finish()
-
-             }
+            }
         }
-
     }
 }

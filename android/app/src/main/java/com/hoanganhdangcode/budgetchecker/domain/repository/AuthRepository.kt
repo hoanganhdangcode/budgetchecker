@@ -3,7 +3,6 @@ package com.hoanganhdangcode.budgetchecker.domain.repository
 import com.hoanganhdangcode.budgetchecker.domain.model.LoggedUser
 
 interface AuthRepository {
-
     /**
      * Lấy thông tin user hiện tại.
      * Logic ngầm (ở tầng Data): Ưu tiên lấy từ Cache (RAM), nếu RAM null thì lấy từ Encrypted Disk.

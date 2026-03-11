@@ -7,5 +7,5 @@ object ThemeConstant {
     const val THEME_LIGHT = "light"
     const val THEME_DARK = "dark"
 
-     val list_theme = listOf<String> (THEME_SYSTEM,THEME_LIGHT,THEME_DARK)
+    val list_theme = listOf<String>(THEME_SYSTEM, THEME_LIGHT, THEME_DARK)
 }

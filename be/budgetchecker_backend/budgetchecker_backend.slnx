@@ -1,3 +1,6 @@
 <Solution>
+  <Project Path="budgetchecker_backend.Application/budgetchecker_backend.Application.csproj" />
+  <Project Path="budgetchecker_backend.Domain/budgetchecker_backend.Domain.csproj" />
+  <Project Path="budgetchecker_backend.Infrastructure/budgetchecker_backend.Infrastructure.csproj" />
   <Project Path="budgetchecker_backend/budgetchecker_backend.csproj" />
 </Solution>

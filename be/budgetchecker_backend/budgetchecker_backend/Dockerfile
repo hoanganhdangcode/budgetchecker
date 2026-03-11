@@ -1,24 +1,31 @@
-# base image for runtime
+# Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
-#build image
+
+# Build image
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-# Copy csproj vào trong containerfolder budgetchecker_backend/ và restore dependencie
+
+# copy project files để restore dependency
 COPY ["budgetchecker_backend/budgetchecker_backend.csproj", "budgetchecker_backend/"]
+COPY ["budgetchecker_backend.Application/budgetchecker_backend.Application.csproj", "budgetchecker_backend.Application/"]
+COPY ["budgetchecker_backend.Infrastructure/budgetchecker_backend.Infrastructure.csproj", "budgetchecker_backend.Infrastructure/"]
+
 RUN dotnet restore "budgetchecker_backend/budgetchecker_backend.csproj"
-#copy soủce
+
+# copy toàn bộ source
 COPY . .
+
 WORKDIR "/src/budgetchecker_backend"
+
 RUN dotnet build "budgetchecker_backend.csproj" -c Release -o /app/build
-#publish
+
+# publish
 FROM build AS publish
 RUN dotnet publish "budgetchecker_backend.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-#set endpoint
-# Stage 4: Final image chạy app
+# final runtime container
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

@@ -4,16 +4,17 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background_image">#293C24</color>
     <color name="color_primary">#293C24</color>
-    <color name="color_on_primary">#FFFFFF</color>
+    <color name="color_on_primary">#1A1D26</color>
 
-    <color name="bg_screen">#F8F9FA</color>
-    <color name="text_title">#1A1D26</color>
+    <color name="bg_screen">#1A1D26</color>
+    <color name="text_title">#F8F9FA</color>
     <color name="text_subtitle">#9E9E9E</color>
     <color name="text_link">#12D18E</color>
-    <color name="bg_input">#FFFFFF</color>
-    <color name="stroke_input">#E0E0E0</color>
+
+    <color name="bg_input">#1A1D26</color>
+    <color name="stroke_input">#F8F9FA</color>
     <color name="icon_input">#9E9E9E</color>
 
-    <color name="stroke_social_button">#E0E0E0</color>
+    <color name="stroke_social_button">#F8F9FA</color>
 
 </resources>

@@ -12,7 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BudgetChecker">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".presentation.ui.auth.SignupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.ui.auth.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.ui.splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

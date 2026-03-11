@@ -47,7 +47,8 @@ services.AddSwaggerGen(options =>
 
 services.AddSingleton<RabbitMqService>();
 
-var connectionString = configuration.GetConnectionString("DefaultConnection");
+var connectionString = configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string not found");
 
 services.AddDbContext<AppDbContext>(options =>
 {
@@ -69,7 +70,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-
 app.MapGet("/ping", () => "Pong");
 
 app.MapPost("/test-rabbit", (RabbitMqService rabbit) =>
@@ -83,5 +83,13 @@ app.MapPost("/test-rabbit", (RabbitMqService rabbit) =>
         message
     });
 });
+
+
+// AUTO MIGRATE DATABASE
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();

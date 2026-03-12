@@ -50,6 +50,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            context.Database.Migrate();
+            Console.WriteLine("---> Đã cập nhật database thành công!");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"---> Lỗi khi Migration: {ex.Message}");
+    }
+}
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -96,6 +113,10 @@ app.MapPost("/test-rabbit", (RabbitMqService rabbit) =>
         message = message
     });
 });
+
+
+
+
 
 
 app.Run();

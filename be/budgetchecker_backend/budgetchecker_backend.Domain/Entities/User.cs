@@ -74,3 +74,4 @@ namespace budgetchecker_backend.Domain.Entities
         Admin = 1
     }
 }
+// user.cs

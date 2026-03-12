@@ -31,6 +31,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root123
       MYSQL_DATABASE: budgetdb
+      MYSQL_USER: budget_user
+      MYSQL_PASSWORD: budget_pass
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:

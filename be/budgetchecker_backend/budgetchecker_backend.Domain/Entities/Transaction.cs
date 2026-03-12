@@ -72,4 +72,4 @@ namespace budgetchecker_backend.Domain.Entities
         OtherExpense = 207
     }
 }       
-//
+// transaction.cs

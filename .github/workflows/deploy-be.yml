@@ -23,7 +23,7 @@ jobs:
           check-name: 'migration'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
-        continue-on-error: true  # nếu không có migration workflow thì bỏ qua
+        continue-on-error: true
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3

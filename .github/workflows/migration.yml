@@ -51,7 +51,8 @@ jobs:
           MIGRATION_NAME="Migration_$(date +%Y%m%d%H%M%S)"
           if dotnet ef migrations add $MIGRATION_NAME \
             --project budgetchecker_backend.Infrastructure \
-            --startup-project budgetchecker_backend; then
+            --startup-project budgetchecker_backend\
+            -- --ConnectionString "server=127.0.0.1;port=3306;database=budgetdb;user=root;password=root123"; then
             echo "created=true" >> $GITHUB_OUTPUT
           else
             echo "created=false" >> $GITHUB_OUTPUT

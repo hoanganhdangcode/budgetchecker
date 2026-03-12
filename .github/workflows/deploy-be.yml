@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: Deploy Backend VPS
 
 on:
@@ -25,6 +24,6 @@ jobs:
           script: |
             set -e
             cd /home/dev/budgetchecker
-            git fetch github main
-            git reset --hard github/main
+            git fetch origin main
+            git reset --hard origin/main
             docker-compose -f infra/docker-compose.yml up -d --build

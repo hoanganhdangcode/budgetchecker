@@ -16,15 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Wait for migration workflow
-        uses: lewagon/wait-on-check-action@v1.3.1
-        with:
-          ref: ${{ github.sha }}
-          check-name: 'migration'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-        continue-on-error: true
-
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -34,6 +25,6 @@ jobs:
           script: |
             set -e
             cd /home/dev/budgetchecker
-            git fetch origin main
-            git reset --hard origin/main
+            git fetch github main
+            git reset --hard github/main
             docker-compose -f infra/docker-compose.yml up -d --build

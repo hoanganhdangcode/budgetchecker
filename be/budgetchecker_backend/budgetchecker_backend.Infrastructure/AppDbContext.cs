@@ -49,7 +49,7 @@ public class AppDbContext : DbContext
                 .IsRequired();
 
             entity.HasOne(x => x.User)
-                .WithMany()
+                .WithMany(u=>u.Transactions)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
